@@ -4,6 +4,7 @@ import { POKEDEX, POKEMON } from "../const/pokeapi";
 const POKEMON_DETAILS_API_CACHE: { [key: string]: any } = {};
 const REGIONS_API_CACHE: { [key: string]: any } = {};
 const POKEDEX_API_CACHE: { [key: string]: any } = {};
+const POKEMON_SPECIES_API_CACHE: { [key: string]: any } = {};
 
 type CacheCallback = (data: any) => void;
 
@@ -26,7 +27,7 @@ export const getRegions = async (): Promise<Object> => {
     return Promise.resolve(REGIONS_API_CACHE["regions"]);
   }
   const cacheCallback = (data: any) => {
-    REGIONS_API_CACHE["regions"] = data;
+    REGIONS_API_CACHE["regions"] = { ...data };
   };
   return getPromises(POKEDEX, cacheCallback).then((data: any) => {
     return data.results;
@@ -51,4 +52,13 @@ export const getPokemonDetails = async (id: string): Promise<Object> => {
     POKEMON_DETAILS_API_CACHE[id] = data;
   };
   return getPromises(`${POKEMON}/${id}`, cacheCallback);
+};
+export const getPokemonSpecies = async (url: string): Promise<Object> => {
+  if (POKEMON_SPECIES_API_CACHE[url]) {
+    return Promise.resolve(POKEMON_SPECIES_API_CACHE[url]);
+  }
+  const cacheCallback = (data: any) => {
+    POKEMON_SPECIES_API_CACHE[url] = data;
+  };
+  return getPromises(url, cacheCallback);
 };

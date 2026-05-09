@@ -1,7 +1,9 @@
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { getPokeDex, getRegions } from "./utils/api";
+import PokemonGridItem from "./component/PokeGridItem";
 
 interface Pokedex {
   descriptions: Array<Object>;
@@ -21,7 +23,7 @@ export default function Index() {
   useEffect(() => {
     getRegions()
       .then((data: any) => {
-        console.log("Regions:", data);
+        // console.log("Regions:", data);
         setRegions(data);
       })
       .catch((error) => {
@@ -43,29 +45,49 @@ export default function Index() {
   }
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Picker
-        onValueChange={handleRegionChange}
-        style={{ height: 50, width: 200 }}
-      >
-        <Picker.Item label="Select a region" value={{}} />
-        {regions.map((reg) => (
-          <Picker.Item key={reg.name} label={reg.name} value={reg.url} />
-        ))}
-      </Picker>
-      <ScrollView>
-        {pokedex?.pokemon_entries?.map((pokemon: any) => (
-          <View key={pokemon.entry_number}>
-            <Text>{pokemon.pokemon_species.name}</Text>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <Picker onValueChange={handleRegionChange} style={styles.dropdown}>
+          <Picker.Item label="Select a region" value={{}} />
+          {regions &&
+            regions.map((reg) => (
+              <Picker.Item key={reg.name} label={reg.name} value={reg.url} />
+            ))}
+        </Picker>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={{ gap: 10 }}
+        >
+          {pokedex?.pokemon_entries?.map((pokemon: any) => (
+            <PokemonGridItem
+              key={pokemon.entry_number}
+              id={pokemon.id}
+              pokemon={{ ...pokemon.pokemon_species }}
+            />
+          ))}
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    gap: 10,
+    flexDirection: "column",
+    justifyContent: "space-around",
+  },
+  dropdown: {
+    width: "100%",
+  },
+  scrollView: {
+    width: "100%",
+    height: "100%",
+    paddingHorizontal: 16,
+    display: "flex",
+    flexDirection: "column",
+    flexWrap: "wrap",
+    alignContent: "center",
+  },
+});
