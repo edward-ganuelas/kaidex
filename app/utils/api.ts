@@ -2,7 +2,7 @@ import { fetch } from "expo/fetch";
 import { POKEDEX, POKEMON } from "../const/pokeapi";
 
 export const getPromises = (url: string): Promise<any> => {
-  return fetch(url).then((response) => {
+  return fetch(url).then((response: any) => {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -11,7 +11,9 @@ export const getPromises = (url: string): Promise<any> => {
 };
 
 export const getRegions = async (): Promise<Object> => {
-  return getPromises(POKEDEX);
+  return getPromises(POKEDEX).then((data: any) => {
+    return data.results;
+  });
 };
 
 export const getPokeDex = async (url: string): Promise<Object> => {
