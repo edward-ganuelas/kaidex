@@ -19,6 +19,8 @@ export default function Index() {
   const [regions, setRegions] = useState<any[]>([]);
   const [region, setRegion] = useState<Object>("");
   const [pokedex, setPokedex] = useState<Pokedex>({} as Pokedex);
+  const [pokemonDetail, setPokemonDetail] = useState<Object>({});
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     getRegions()
@@ -44,6 +46,12 @@ export default function Index() {
       });
   }
 
+  function onPokemonPress(pokemon: Object) {
+    console.log("Selected Pokemon:", pokemon);
+    setPokemonDetail(pokemon);
+    setShowModal(true);
+  }
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
@@ -63,6 +71,7 @@ export default function Index() {
               key={pokemon.entry_number}
               id={pokemon.id}
               pokemon={{ ...pokemon.pokemon_species }}
+              onPokemonPress={onPokemonPress}
             />
           ))}
         </ScrollView>

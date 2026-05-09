@@ -1,9 +1,18 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import { useState, useEffect } from "react";
 import { getPokemonDetails, getPokemonSpecies } from "../utils/api";
 
 export default function PokemonGridItem(props: any) {
   const [pokemonDetails, setPokemonDetails] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     // Fetch pokemon details using props.pokemon.url
     getPokemonSpecies(props.pokemon.url)
@@ -12,26 +21,38 @@ export default function PokemonGridItem(props: any) {
         let details = await getPokemonDetails(pokemonId);
         details = { ...details, ...data };
         setPokemonDetails(details);
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching pokemon details:", error);
+        setLoading(false);
       });
   }, [props.pokemon.url]);
+
+  function onPress() {
+    if (!loading && pokemonDetails) {
+      props.onPokemonPress(pokemonDetails);
+    }
+  }
+
   return (
-    <View style={styles.pokedexEntry}>
-      <Text>{props.pokemon.name}</Text>
-      {pokemonDetails && (
-        <View>
-          {pokemonDetails.types.map((type: any) => (
-            <Text key={type.type.name}>{type.type.name}</Text>
-          ))}
-          <Image
-            source={{ uri: pokemonDetails.sprites.front_default }}
-            style={styles.image}
-          />
-        </View>
-      )}
-    </View>
+    <Pressable onPress={onPress}>
+      <View style={styles.pokedexEntry}>
+        <Text>{props.pokemon.name}</Text>
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : pokemonDetails ? (
+          <View>
+            {pokemonDetails.sprites?.front_default && (
+              <Image
+                source={{ uri: pokemonDetails.sprites.front_default }}
+                style={styles.image}
+              />
+            )}
+          </View>
+        ) : null}
+      </View>
+    </Pressable>
   );
 }
 
@@ -43,6 +64,7 @@ const styles = StyleSheet.create({
     padding: 8,
     alignSelf: "center",
     flexBasis: "auto",
+    minWidth: 150,
   },
   image: {
     width: 100,
