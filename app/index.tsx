@@ -1,10 +1,9 @@
-import { Picker } from "@react-native-picker/picker";
 import { useEffect, useState } from "react";
-import { StyleSheet, TextInput, View, FlatList } from "react-native";
+import { FlatList, StyleSheet, TextInput, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { getPokeDex, getRegions } from "./utils/api";
 import PokemonGridItem from "./component/PokeGridItem";
 import PokemonDetails from "./component/PokemonDetails";
+import { getPokeDex, getRegions } from "./utils/api";
 
 
 interface Pokedex {
@@ -26,9 +25,10 @@ export default function Index() {
 
   useEffect(() => {
     getRegions()
-      .then((data: any) => {
-        // console.log("Regions:", data);
-        setRegions(data);
+      .then(async (data: any) => {
+        const nationalDeck = data.find((reg: any) => reg.name === "national");
+        console.log("National Deck:", nationalDeck);
+        handleRegionChange(nationalDeck.url);
       })
       .catch((error) => {
         console.error("Error fetching regions:", error);
@@ -61,13 +61,6 @@ export default function Index() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
-        <Picker selectedValue={region} onValueChange={handleRegionChange} style={styles.dropdown}>
-          <Picker.Item label="Select a region" value={{}} />
-          {regions &&
-            regions.map((reg) => (
-              <Picker.Item key={reg.name} label={reg.name} value={reg.url} />
-            ))}
-        </Picker>
         <FlatList
           data={pokedex.pokemon_entries}
           keyExtractor={(item: any) => item.entry_number.toString()}
@@ -104,9 +97,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-around",
     alignItems: "flex-start"
-  },
-  dropdown: {
-    width: "100%",
   },
   scrollView: {
     width: "100%",
