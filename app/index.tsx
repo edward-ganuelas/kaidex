@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { getPokeDex, getRegions } from "./utils/api";
 import PokemonGridItem from "./component/PokeGridItem";
+import PokemonDetails from "./component/PokemonDetails";
 
 interface Pokedex {
   descriptions: Array<Object>;
@@ -19,6 +20,8 @@ export default function Index() {
   const [regions, setRegions] = useState<any[]>([]);
   const [region, setRegion] = useState<Object>("");
   const [pokedex, setPokedex] = useState<Pokedex>({} as Pokedex);
+  const [pokemonDetail, setPokemonDetail] = useState<Object>({});
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     getRegions()
@@ -44,6 +47,16 @@ export default function Index() {
       });
   }
 
+  function onPokemonPress(pokemon: Object) {
+    console.log("Selected Pokemon:", pokemon);
+    setPokemonDetail(pokemon);
+    setShowModal(true);
+  }
+  function onModalClose() {
+    setShowModal(false);
+    setPokemonDetail({});
+  }
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
@@ -63,10 +76,16 @@ export default function Index() {
               key={pokemon.entry_number}
               id={pokemon.id}
               pokemon={{ ...pokemon.pokemon_species }}
+              onPokemonPress={onPokemonPress}
             />
           ))}
         </ScrollView>
       </SafeAreaView>
+      <PokemonDetails
+        visible={showModal}
+        pokemonDetail={pokemonDetail}
+        onClose={onModalClose}
+      />
     </SafeAreaProvider>
   );
 }
