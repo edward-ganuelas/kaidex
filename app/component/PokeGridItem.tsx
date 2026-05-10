@@ -1,12 +1,12 @@
+import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
+  Image,
+  Pressable,
   StyleSheet,
   Text,
   View,
-  Image,
-  Pressable,
-  ActivityIndicator,
 } from "react-native";
-import { useState, useEffect } from "react";
 import { getPokemonDetails, getPokemonSpecies } from "../utils/api";
 
 export default function PokemonGridItem(props: any) {
