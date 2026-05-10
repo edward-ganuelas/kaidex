@@ -1,4 +1,26 @@
 import { Modal, View, Text, StyleSheet, Image, Pressable } from "react-native";
+import convert from 'color-convert';
+import { complement } from 'react-native-color-toolkit';
+
+function convertColorToRGBA(colorName: string, alpha: number = 1): string {
+    try {
+        const rgb = convert.keyword.rgb(colorName);
+        return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
+    } catch (error) {
+        console.error(`Error converting color: ${colorName}`, error);
+        return `rgba(255, 255, 255, ${alpha})`;
+    }
+}
+
+function getComplementaryColor(colorName: string): string {
+    try {
+        const rgb = convert.keyword.hex(colorName);
+        return complement(rgb);
+    } catch (error) {
+        console.error(`Error converting color: ${colorName}`, error);
+        return 'black';
+    }
+}
 
 export default function PokemonDetails(props: any) {
     const pokemonDetail = { ...(props.pokemonDetail ?? {}) };
@@ -17,31 +39,38 @@ export default function PokemonDetails(props: any) {
                 <View
                     style={{
                         ...styles.contentContainer,
-                        backgroundColor: pokemonDetail?.color?.name ?? "white",
                     }}
                 >
-                    <Text>{pokemonDetail.name}</Text>
-                    <Text>{pokemonDetail.flavor_text_entries?.[0]?.flavor_text}</Text>
+                    <Text>{pokemonDetail.names?.find((name: any) => name.language.name === "en")?.name}</Text>
+                    <Text>
+                        The {" "}
+                        {pokemonDetail.genera?.find((genus: any) => genus.language.name === "en")?.genus}
+                    </Text>
+                    <Text>{pokemonDetail.flavor_text_entries?.filter((entry: any) => entry.language.name === "en")[0]?.flavor_text}</Text>
                     {pokemonDetail.sprites?.front_default && (
                         <Image
                             source={{ uri: pokemonDetail.sprites.front_default }}
                             style={{ width: 200, height: 200 }}
                         />
                     )}
-                    <Text>Types</Text>
-                    {pokemonDetail.types?.map((type: any) => (
-                        <Text key={type.type.name}>{type.type.name}</Text>
-                    ))}
+                    <Text>Types: {" "}
+                        {pokemonDetail.types?.map((type: any) => type.type.name).join(", ")}
+                    </Text>
                     <Text>
                         Abilities:{" "}
                         {pokemonDetail.abilities
                             ?.map((ability: any) => ability.ability.name)
                             .join(", ")}
                     </Text>
-                    <Text>Base Experience: {pokemonDetail.base_experience}</Text>
-                    <Pressable onPress={props.onClose} style={styles.button}>
+                    <Text>Habitat: {pokemonDetail.habitat?.name}</Text>
+                    <Pressable onPress={props.onClose} style={{
+                        ...styles.button,
+                        backgroundColor: convertColorToRGBA(pokemonDetail.color?.name ?? "white", 0.8),
+                    }}>
                         <View>
-                            <Text>Close</Text>
+                            <Text style={{
+                                color: getComplementaryColor(pokemonDetail.color?.name ?? "white"),
+                            }}>Close</Text>
                         </View>
                     </Pressable>
                 </View>
@@ -68,6 +97,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundBlendMode: "multiply",
         gap: 10,
+        backgroundColor: "white",
     },
     button: {
         display: "flex",
@@ -75,6 +105,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         padding: 10,
         borderRadius: 8,
-        backgroundColor: "rgba(255, 255, 255, 0.5)",
     },
+    buttonText: {
+        color: "white",
+    }
 });

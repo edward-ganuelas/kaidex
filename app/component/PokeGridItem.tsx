@@ -41,8 +41,8 @@ export default function PokemonGridItem(props: any) {
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : pokemonDetails ? (
-          <View>
-            <Text>{props.pokemon.name}</Text>
+          <View style={styles.pokemonDetail}>
+             <Text>{pokemonDetails.names?.find((name: any) => name.language.name === "en")?.name}</Text>
             {pokemonDetails.sprites?.front_default && (
               <Image
                 source={{ uri: pokemonDetails.sprites.front_default }}
@@ -70,4 +70,9 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
   },
+  pokemonDetail: {
+    display: "flex",
+    flexDirection: "column",
+      alignItems: "center",
+  }
 });
