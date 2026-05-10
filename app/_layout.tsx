@@ -5,7 +5,7 @@ export default function RootLayout() {
     <Stack>
       <Stack.Screen
         name="index"
-        options={{ title: "Kaidex", statusBarHidden: true }}
+        options={{ title: "Kaidex", statusBarHidden: true, headerShadowVisible: false }}
       />
     </Stack>
   );

@@ -1,10 +1,11 @@
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { getPokeDex, getRegions } from "./utils/api";
 import PokemonGridItem from "./component/PokeGridItem";
 import PokemonDetails from "./component/PokemonDetails";
+
 
 interface Pokedex {
   descriptions: Array<Object>;
@@ -18,7 +19,7 @@ interface Pokedex {
 
 export default function Index() {
   const [regions, setRegions] = useState<any[]>([]);
-  const [region, setRegion] = useState<Object>("");
+  const [region, setRegion] = useState<string>("");
   const [pokedex, setPokedex] = useState<Pokedex>({} as Pokedex);
   const [pokemonDetail, setPokemonDetail] = useState<Object>({});
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -60,7 +61,7 @@ export default function Index() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
-        <Picker onValueChange={handleRegionChange} style={styles.dropdown}>
+        <Picker selectedValue={region} onValueChange={handleRegionChange} style={styles.dropdown}>
           <Picker.Item label="Select a region" value={{}} />
           {regions &&
             regions.map((reg) => (
@@ -80,6 +81,12 @@ export default function Index() {
             />
           ))}
         </ScrollView>
+        {pokedex.pokemon_entries && (
+          <View style={styles.searchContainer}>
+            <TextInput placeholder="Search" style={styles.search} />
+          </View>
+        )}
+
       </SafeAreaView>
       <PokemonDetails
         visible={showModal}
@@ -93,9 +100,9 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 10,
     flexDirection: "column",
     justifyContent: "space-around",
+    alignItems: "flex-start"
   },
   dropdown: {
     width: "100%",
@@ -108,5 +115,17 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     flexWrap: "wrap",
     alignContent: "center",
+    flex: 2,
   },
+  searchContainer: {
+    width: "100%",
+    display: "flex",
+  },
+  search: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 8,
+  }
 });
