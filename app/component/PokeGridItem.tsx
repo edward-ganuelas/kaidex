@@ -38,11 +38,11 @@ export default function PokemonGridItem(props: any) {
   return (
     <Pressable onPress={onPress}>
       <View style={styles.pokedexEntry}>
-        <Text>{props.pokemon.name}</Text>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : pokemonDetails ? (
           <View>
+            <Text>{props.pokemon.name}</Text>
             {pokemonDetails.sprites?.front_default && (
               <Image
                 source={{ uri: pokemonDetails.sprites.front_default }}

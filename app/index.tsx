@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { getPokeDex, getRegions } from "./utils/api";
 import PokemonGridItem from "./component/PokeGridItem";
+import PokemonDetails from "./component/PokemonDetails";
 
 interface Pokedex {
   descriptions: Array<Object>;
@@ -51,6 +52,10 @@ export default function Index() {
     setPokemonDetail(pokemon);
     setShowModal(true);
   }
+  function onModalClose() {
+    setShowModal(false);
+    setPokemonDetail({});
+  }
 
   return (
     <SafeAreaProvider>
@@ -76,6 +81,11 @@ export default function Index() {
           ))}
         </ScrollView>
       </SafeAreaView>
+      <PokemonDetails
+        visible={showModal}
+        pokemonDetail={pokemonDetail}
+        onClose={onModalClose}
+      />
     </SafeAreaProvider>
   );
 }
