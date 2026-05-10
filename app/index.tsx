@@ -1,6 +1,6 @@
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View, FlatList } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { getPokeDex, getRegions } from "./utils/api";
 import PokemonGridItem from "./component/PokeGridItem";
@@ -68,19 +68,20 @@ export default function Index() {
               <Picker.Item key={reg.name} label={reg.name} value={reg.url} />
             ))}
         </Picker>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={{ gap: 10 }}
-        >
-          {pokedex?.pokemon_entries?.map((pokemon: any) => (
+        <FlatList
+          data={pokedex.pokemon_entries}
+          keyExtractor={(item: any) => item.entry_number.toString()}
+          numColumns={3}
+          columnWrapperStyle={{ gap: 10 }}
+          renderItem={({ item }: { item: any }) => (
             <PokemonGridItem
-              key={pokemon.entry_number}
-              id={pokemon.id}
-              pokemon={{ ...pokemon.pokemon_species }}
+              pokemon={{ ...item.pokemon_species }}
               onPokemonPress={onPokemonPress}
             />
-          ))}
-        </ScrollView>
+          )}
+          style={styles.scrollView}
+          contentContainerStyle={{ gap: 10 }}
+        />
         {pokedex.pokemon_entries && (
           <View style={styles.searchContainer}>
             <TextInput placeholder="Search" style={styles.search} />
