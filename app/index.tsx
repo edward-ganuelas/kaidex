@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, TextInput, View } from "react-native";
+import { Dimensions, FlatList, StyleSheet, TextInput, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import PokemonGridItem from "./component/PokeGridItem";
 import PokemonDetails from "./component/PokemonDetails";
@@ -58,13 +58,15 @@ export default function Index() {
     setPokemonDetail({});
   }
 
+  const { width, height } = Dimensions.get('window');
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <FlatList
           data={pokedex.pokemon_entries}
           keyExtractor={(item: any) => item.entry_number.toString()}
-          numColumns={3}
+          numColumns={ width < 768 ? 2 : 3}
           columnWrapperStyle={{ gap: 10 }}
           renderItem={({ item }: { item: any }) => (
             <PokemonGridItem
