@@ -17,7 +17,9 @@ export const getPromises = (
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     let data = await response.json();
-    cacheCallback(data);
+    if (process.env.NODE_ENV === "development") {
+      cacheCallback(data);
+    }
     return data;
   });
 };
